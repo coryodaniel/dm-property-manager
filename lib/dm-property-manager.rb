@@ -42,7 +42,7 @@ module DataMapper
       #   
       #   m = MyCoolModel.new
       #   m.fav_color = "black"
-      #   om = m.create_other_model
+      #   om = m.new_other_model
       #   om.fav_color # => "black"
       #
       #
@@ -82,12 +82,24 @@ module DataMapper
       
         self.class_eval <<-MAKE_METHODS
           # Makes a managed whatnot, overrides with specified options
-          def create_#{k}(opts={})
+          def new_#{k}(opts={})
             self.class.managed_properties[:#{k}].each do |p|
               opts[p] ||= self.send(p)
             end
           
             return #{klass_name}.new(opts)
+          end
+          
+          def create_#{k}(opts={})
+            __new_managed_klass = new_#{k}(opts)
+            __new_managed_klass.save
+            __new_managed_klass
+          end
+          
+          def create_#{k}_and_destroy(opts={})
+            __new_managed_klass = create_#{k}(opts)
+            self.destroy
+            __new_managed_klass
           end
         MAKE_METHODS
       end
