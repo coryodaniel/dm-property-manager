@@ -93,6 +93,14 @@ For the example we have a ticket system with three types of tickets (yeah its a 
     @unsold_ticket.save
     
     @unsold_ticket.new_sold_ticket #=> an unsaved new ticket with the same properties
+    @unsold_ticket.create_sold_ticket #=> a saved ticket with the same properties
+    @unsold_ticket.create_sold_ticket(:price=>2.50) #=> a saved ticket overriding the price
+    @unsold_ticket.create_sold_ticket_and_destroy #=> a saved ticket and destroy the unsold one
+    
+    @sold_ticket = @unsold_ticket.create_sold_ticket_and_destroy(:price => 25.30)
+    
+    # the concert comes and goes...
+    @stub = @sold_ticket.create_stub_and_destroy #=> destroyes the sold ticket and makes it a ticket stub.
 
 
 # Auto Archiver #

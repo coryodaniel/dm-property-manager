@@ -16,7 +16,7 @@ module DataMapper
       # @return Hash
       #
       def managed_properties
-        @_managed_properties || {}
+        @_managed_properties ||= {}
       end
     
       # (manage) - Define properties to manage on a model
@@ -45,11 +45,7 @@ module DataMapper
       #   om = m.new_other_model
       #   om.fav_color # => "black"
       #
-      #
-      #
-      #   
       def manage(*klasses,&block)
-        @_managed_properties ||= {}
         @delegated_klasses = klasses.pop if klasses.last.is_a?(Hash)
       
         # properties before eval
@@ -66,15 +62,17 @@ module DataMapper
       
         @delegated_klasses.each do |d,k|
           manage_klass(d,new_properties,&block)
-          tmp_klass = Object.const_get(Extlib::Inflection.classify(d)).manage_klass(k,new_properties,&block)
+          tmp_klass = Object.const_get(Extlib::Inflection.classify(d))
+          tmp_klass.send(:include, DataMapper::PropertyManager)
+          tmp_klass.manage_klass(k,new_properties,&block)
         end if @delegated_klasses
       
       end # end manage
     
       def manage_klass(k,props, &block)
-        @_managed_properties[k.to_sym] ||= []
-        @_managed_properties[k.to_sym]  += props
-        @_managed_properties[k.to_sym].uniq!
+        managed_properties[k.to_sym] ||= []
+        managed_properties[k.to_sym]  += props
+        managed_properties[k.to_sym].uniq!
               
         klass_name  = Extlib::Inflection.classify(k)
         klass       = Object.const_get klass_name
