@@ -1,15 +1,5 @@
 # A DataMapper module that allows one class to define properties in another, and 'spin off'
 #   instances of that class
-
-# TODO, has relationships should auto populate
-
-# TODO, belongs_to relationships should auto populate, currently you have to do this to get it
-#   to work
-# manage(:someclass) do
-#   belongs_to :something
-#   property :something_id, Integer
-#
-# end
 #
 module DataMapper
   module PropertyManager

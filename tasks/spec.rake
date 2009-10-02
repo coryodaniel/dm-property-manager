@@ -5,7 +5,7 @@ task :spec do
 
     t.libs = ['lib']
     t.spec_opts << "--color" << "--format" << "progress" #"specdoc"
-    
+t.rcov = true    
     if ENV['RCOV']
       t.rcov = true
       t.rcov_opts << '--exclude' << 'pkg,spec,interactive.rb,install_test_suite.rb,lib/gems,' + Gem.path.join(',')

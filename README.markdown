@@ -1,5 +1,6 @@
-DM PropertyManager is useful when you have similar models with identical properties/relationships 
-between the two.
+Compatible w/ DM >= 0.9.11
+ 
+DM PropertyManager is useful when you have similar models with identical properties/relationships between the two.
 
 Whenever a model manages another model it also gets a few factory methods: 
  * new_*model_name* : creates an unsaved instance
@@ -11,6 +12,11 @@ instance.
 
 Example: Rsvp.manage(:seat){...do_something...}
 Rsvp.new.respond_to? :new_seat #=> true
+
+TODOS
+======
+  * #has relationships should auto populate, see hack below
+  * #belongs_to relationships should auto populate, see hack below
 
 # Simple Example #
 
@@ -147,4 +153,24 @@ PropertyManager can be used to manage properties between a model and some archiv
     user.save
 
     # Move the user to the archive_users repo
-    user.archive!
+    user.archive!                         
+    
+# Hack for auto populating relationships #
+    class Dad
+      include DataMapper::Resource
+      property :id, Serial
+      property :first_name, String
+      
+      manage(:kid) do
+        belongs_to :dad   
+        property :dad_id,     Integer
+        property :last_name,  String
+      end
+    end
+    
+    class Kid
+      include DataMapper::Resource
+      property :id, Serial
+      property :first_name, String
+    end
+    
